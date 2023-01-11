@@ -138,7 +138,9 @@ public class login extends JDialog {
 				
 				Home home = new Home(strID,strName);
 				home.setModal(true);
-				home.setVisible(true);	
+				home.setVisible(true);
+				Reservation reservation = new Reservation(strID, strName);
+				
 				System.exit(DISPOSE_ON_CLOSE);
 				
 			}
