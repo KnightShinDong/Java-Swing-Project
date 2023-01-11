@@ -103,7 +103,7 @@ public class Home extends JDialog {
 							"root",
 							"12345");
 			Statement stmt = con.createStatement();			
-			String sql = "SELECT * FROM booktbl";
+			String sql = "SELECT * FROM reservationtbl";
 			ResultSet rs = stmt.executeQuery(sql);			
 			DefaultTableModel dtm = (DefaultTableModel)table.getModel();
 			dtm.setRowCount(0);
