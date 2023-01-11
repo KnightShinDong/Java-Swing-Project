@@ -1,5 +1,5 @@
 import java.awt.BorderLayout;
-
+import java.awt.Font;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
+import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
@@ -20,10 +21,13 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Enumeration;
+
 import javax.swing.JRadioButton;
 
 public class Join extends JDialog {
 
+	private static Font font = null;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField tfJoinId;
 	private JTextField tfJoinPw;
@@ -36,8 +40,9 @@ public class Join extends JDialog {
 	private JTextField tfJoinEmail2;
 	private JComboBox cbPhone;
 	private JTextField tfBirth;
-	private JRadioButton raMale;
-	private JRadioButton raFemale;
+	private ButtonGroup group;
+	private String result;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -172,15 +177,7 @@ public class Join extends JDialog {
 		
 	
 		
-		ButtonGroup group = new ButtonGroup();
-		raMale = new JRadioButton("남성",true);
-		raFemale = new JRadioButton("여성");
-		raMale.setBounds(99, 329, 64, 23);
-		raFemale.setBounds(188, 329, 52, 23);
-		group.add(raMale);
-		group.add(raFemale);
-		contentPanel.add(raMale);
-		contentPanel.add(raFemale);
+		group = new ButtonGroup();
 		
 		
 		
@@ -197,8 +194,29 @@ public class Join extends JDialog {
 		tfBirth.setBounds(96, 149, 168, 21);
 		contentPanel.add(tfBirth);
 		tfBirth.setColumns(10);
+		
+		JRadioButton raMale = new JRadioButton("남성");
+		
+		raMale.setFont(font); 
+		group.add(raMale);
+		raMale.setBounds(99, 326, 64, 23);
+		contentPanel.add(raMale);
+		
+		JRadioButton raFemale = new JRadioButton("여성");
+		raMale.setSelected(true);
+		raFemale.setFont(font);
+		group.add(raFemale);
+		raFemale.setBounds(184, 326, 113, 23);
+		contentPanel.add(raFemale);
+		
+		
+			if(raMale.isSelected()) {
+				result = "남성";
+			} else if (raFemale.isSelected())
+				result = "여성";
 	}
 
+	
 	protected void Join() {
 	
 			try {
@@ -209,14 +227,8 @@ public class Join extends JDialog {
 								"root",
 								"12345");
 				Statement stmt = con.createStatement();
-				String strMale, strFemale, result;
-				if(raMale != null) {
-					strMale = "남성";
-					result=strMale;
-				} else {
-					strFemale = "여성";
-					result=strFemale;
-				}
+				System.out.println(result);
+				
 				String sql = "INSERT INTO hlogin(id,pw,name,birth,address,phonecompany,phone1,phone2,phone3,email1,email2,gender,joindate) values('";
 				sql = sql + tfJoinId.getText() + "','";
 				sql = sql + tfJoinPw.getText() + "','" + tfJoinName.getText() + "','" + tfBirth.getText() + "','" + tfJoinAddress.getText() + "','";
@@ -224,7 +236,7 @@ public class Join extends JDialog {
 				sql = sql + tfJoinPhone2.getText() + "','" + tfJoinPhone3.getText() + "','";
 				sql = sql + tfJoinEmail1.getText() + "','" + tfJoinEmail2.getText() + "','"+result+"',CURRENT_TIME())";
 				
-				System.out.println(sql);
+				
 				
 				if(stmt.executeUpdate(sql)>0)
 					JOptionPane.showMessageDialog(null, "정상 입력 완료");
