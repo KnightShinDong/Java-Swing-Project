@@ -14,9 +14,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
+import com.mysql.cj.Session;
+
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Home extends JDialog {
 
@@ -25,21 +32,12 @@ public class Home extends JDialog {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		try {
-			Home dialog = new Home("test","홍길똥");
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+	
 	/**
 	 * Create the dialog.
 	 */
 	public Home(String strID, String strName) {
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 353);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -50,7 +48,7 @@ public class Home extends JDialog {
 			contentPanel.add(lblNewLabel_2);
 		}
 		{
-			JLabel lblNewLabel_3 = new JLabel("\uB204\uAD6C");
+			JLabel lblNewLabel_3 = new JLabel(strName);
 			lblNewLabel_3.setBounds(12, 10, 45, 15);
 			contentPanel.add(lblNewLabel_3);
 		}
@@ -68,9 +66,20 @@ public class Home extends JDialog {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(25, 71, 378, 148);
 		contentPanel.add(scrollPane);
-		String columnNames[]= {"순번","날짜","진료실","진료여부"};
+		String columnNames[]= {"순번","날짜","시간","진료여부"};
 		DefaultTableModel dtm = new DefaultTableModel(columnNames,0);
 		table = new JTable(dtm);		
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = table.getSelectedRow();
+				String checkOk = (String)table.getValueAt(row, 1);
+				setVisible(false);
+				reservationOk reOk = new reservationOk(checkOk,strID,strName);
+				reOk.setModal(true);
+				reOk.setVisible(true);
+			}
+		});
 		scrollPane.setViewportView(table);
 		// 글꼴 선택(WindowBuilder -> Design - Properties)
 		table.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
@@ -82,17 +91,44 @@ public class Home extends JDialog {
 		}
 		// 셀 높이 조절
 		table.setRowHeight(25);
+		
+		JButton btnNewButton = new JButton("예약하기");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Reservation reservation = new Reservation(strID, strName);
+				setVisible(false);
+				reservation.setModal(true);
+				reservation.setVisible(true);
+				
+			}
+		});
+		btnNewButton.setBounds(98, 248, 97, 23);
+		contentPanel.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("로그아웃");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				login login = new login();
+				setVisible(false);
+				login.setVisible(true);
+				
+			}
+		});
+		btnNewButton_1.setBounds(237, 248, 97, 23);
+		contentPanel.add(btnNewButton_1);
 		// 셀 정렬
 		DefaultTableCellRenderer cellAlignRight = new DefaultTableCellRenderer();
 		cellAlignRight.setHorizontalAlignment(JLabel.RIGHT);
 		table.getColumn("순번").setCellRenderer(cellAlignRight);		
 		table.getColumn("날짜").setCellRenderer(cellAlignRight);
 		
-		ContentList();
+		ContentList(strID, strName);
 		
 	}
 
-	private void ContentList() {
+	private void ContentList(String strID, String strName) {
 		// TODO Auto-generated method stub
 		
 		try {
@@ -102,27 +138,44 @@ public class Home extends JDialog {
 							"jdbc:mysql://localhost:3306/hospital",
 							"root",
 							"12345");
-			Statement stmt = con.createStatement();			
-			String sql = "SELECT * FROM reservationtbl";
+			Statement stmt = con.createStatement();	
+			
+			String sql = "SELECT * FROM reservationtbl where id='"+strID+"'";
 			ResultSet rs = stmt.executeQuery(sql);			
 			DefaultTableModel dtm = (DefaultTableModel)table.getModel();
 			dtm.setRowCount(0);
+			
+			
+			
 			int cnt=0;
 			while(rs.next()) {
 				String record[] = new String[6];
 				record[0] = Integer.toString(++cnt);
-				record[1] = rs.getString("ISBN");
-				record[2] = rs.getString("Title");
-				record[3] = rs.getString("Author");
-				record[4] = rs.getString("Publisher");
-				record[5] = rs.getString("Price");
+				record[1] = rs.getString("rdate");
+				record[2] = rs.getString("rtime");
+				
+				String ck = null;
+				int checked = rs.getInt("checkflag");
+				
+				if(checked == 1) {
+					ck = "예약확인중";
+				} else if (checked == 2) {
+					ck = "예약완료";
+				} else if (checked == 0) {
+					ck= "취소";
+				}
+				
+				record[3] = ck;	
+				
 				dtm.addRow(record);
 			}
 											
 		} catch (ClassNotFoundException | SQLException e1) {
 			e1.printStackTrace();
 		}
-		
-		
 	}
+	
+	
+	
+
 }

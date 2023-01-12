@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JRadioButton;
+
 
 public class Join extends JDialog {
 
@@ -36,20 +38,14 @@ public class Join extends JDialog {
 	private JTextField tfJoinEmail2;
 	private JComboBox cbPhone;
 	private JTextField tfBirth;
-	private JRadioButton raMale;
-	private JRadioButton raFemale;
+	JRadioButton rdbtnNewRadioButton;
+	JRadioButton rdbtnNewRadioButton_1;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		try {
-			Join dialog = new Join();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+
 
 	/**
 	 * Create the dialog.
@@ -170,17 +166,6 @@ public class Join extends JDialog {
 		btnJoinFail.setBounds(239, 379, 97, 23);
 		contentPanel.add(btnJoinFail);
 		
-	
-		
-		ButtonGroup group = new ButtonGroup();
-		raMale = new JRadioButton("남성",true);
-		raFemale = new JRadioButton("여성");
-		raMale.setBounds(99, 329, 64, 23);
-		raFemale.setBounds(188, 329, 52, 23);
-		group.add(raMale);
-		group.add(raFemale);
-		contentPanel.add(raMale);
-		contentPanel.add(raFemale);
 		
 		
 		
@@ -197,6 +182,18 @@ public class Join extends JDialog {
 		tfBirth.setBounds(96, 149, 168, 21);
 		contentPanel.add(tfBirth);
 		tfBirth.setColumns(10);
+		
+		rdbtnNewRadioButton = new JRadioButton("남성");
+		buttonGroup.add(rdbtnNewRadioButton);
+		
+		rdbtnNewRadioButton.setBounds(91, 326, 64, 23);
+		contentPanel.add(rdbtnNewRadioButton);
+		
+		rdbtnNewRadioButton_1 = new JRadioButton("여성");
+		buttonGroup.add(rdbtnNewRadioButton_1);
+		
+		rdbtnNewRadioButton_1.setBounds(204, 326, 121, 23);
+		contentPanel.add(rdbtnNewRadioButton_1);
 	}
 
 	protected void Join() {
@@ -209,29 +206,32 @@ public class Join extends JDialog {
 								"root",
 								"12345");
 				Statement stmt = con.createStatement();
-				String strMale, strFemale, result;
-				if(raMale != null) {
-					strMale = "남성";
-					result=strMale;
-				} else {
-					strFemale = "여성";
-					result=strFemale;
-				}
-				String sql = "INSERT INTO hlogin(id,pw,name,birth,address,phonecompany,phone1,phone2,phone3,email1,email2,gender,joindate) values('";
+				String result=null;
+				 if(rdbtnNewRadioButton.isSelected()) {
+					 result =rdbtnNewRadioButton.getText();
+				 } else {
+					 result = rdbtnNewRadioButton_1.getText();
+				 }
+				
+				String sql = "INSERT INTO hlogin(id,pw,name,birth,address,phonecompany,phone1,phone2,phone3,email1,email2,gender,jdate) values('";
 				sql = sql + tfJoinId.getText() + "','";
 				sql = sql + tfJoinPw.getText() + "','" + tfJoinName.getText() + "','" + tfBirth.getText() + "','" + tfJoinAddress.getText() + "','";
 				sql = sql + cbPhone.getSelectedItem() + "','" + tfJoinPhone1.getText() + "','";
 				sql = sql + tfJoinPhone2.getText() + "','" + tfJoinPhone3.getText() + "','";
 				sql = sql + tfJoinEmail1.getText() + "','" + tfJoinEmail2.getText() + "','"+result+"',CURRENT_TIME())";
+				System.out.println(result);
 				
-				System.out.println(sql);
 				
-				if(stmt.executeUpdate(sql)>0)
+				if(stmt.executeUpdate(sql)>0) {
 					JOptionPane.showMessageDialog(null, "정상 입력 완료");
-						
-				else
+					login login = new login();
+					login.setVisible(true);
+					setVisible(false);
+					
+					
+				}else {
 					JOptionPane.showMessageDialog(null, "오류입니다");
-				
+				}
 			} catch (ClassNotFoundException | SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

@@ -124,6 +124,9 @@ public class login extends JDialog {
 							"root",
 							"12345");
 			Statement stmt = con.createStatement();
+			
+			
+			
 			String sql = "SELECT name FROM hlogin ";
 			sql = sql + "where id='" + tfLoginId.getText();
 			sql = sql + "' and pw='" + tfLoginPw.getText()+"'";	
@@ -153,5 +156,7 @@ public class login extends JDialog {
 			e1.printStackTrace();
 		}
 	}
+	
+	
 	
 }
