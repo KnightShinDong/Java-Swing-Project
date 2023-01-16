@@ -114,6 +114,8 @@ public class login extends JDialog {
 		contentPanel.add(lblSearchId);
 	}
 	
+	
+	//로그인
 	protected void Go() {
 		// DB 연동
 		try {

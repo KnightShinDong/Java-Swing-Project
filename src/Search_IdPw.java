@@ -248,7 +248,7 @@ public class Search_IdPw extends JDialog {
 			search.add(btnSPw);
 		}
 	}
-
+	//아이디 비밀번호 찾기
 	protected void SearchPw() {
 		// TODO Auto-generated method stub
 		try {

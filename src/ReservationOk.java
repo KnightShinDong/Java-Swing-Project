@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 
-public class reservationOk extends JDialog {
+public class ReservationOk extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField tfcontent2;
@@ -36,7 +36,7 @@ public class reservationOk extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public reservationOk(String checkOk,String strID,String strName) {
+	public ReservationOk(String checkOk,String strID,String strName) {
 		setBounds(100, 100, 450, 394);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -69,6 +69,13 @@ public class reservationOk extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				
 				Modify();
+				
+				Home home = new Home(strName, strName);	
+				setVisible(false);
+				home.ContentList(strID, strName);
+				home.setModal(true);
+				home.setVisible(true);
+				
 				
 			}
 		});
@@ -116,7 +123,7 @@ public class reservationOk extends JDialog {
 	
 	
 	
-	
+	//예약 수정
 	protected void Modify() {
 		// TODO Auto-generated method stub
 		
@@ -148,6 +155,7 @@ public class reservationOk extends JDialog {
 		
 	}
 
+	//예약보기 
 	private void checkOk (String strID) {
 		// TODO Auto-generated method stub
 		
@@ -181,7 +189,6 @@ public class reservationOk extends JDialog {
 		} catch (ClassNotFoundException | SQLException e1) {
 			e1.printStackTrace();
 		}
-	
-		
 	}
+	
 }

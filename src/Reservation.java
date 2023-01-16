@@ -126,6 +126,7 @@ public class Reservation extends JDialog {
 		
 	}
 
+	//예약신청
 	protected void reservation(String strID,String strName) {
 		// TODO Auto-generated method stub
 		

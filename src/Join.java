@@ -196,6 +196,7 @@ public class Join extends JDialog {
 		contentPanel.add(rdbtnNewRadioButton_1);
 	}
 
+	//회원가입
 	protected void Join() {
 	
 			try {

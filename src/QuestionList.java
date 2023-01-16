@@ -25,48 +25,30 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class Home extends JDialog {
+public class QuestionList extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTable table;
+	private String listPW;
+	public int listidx;
 	/**
 	 * Launch the application.
 	 */
-	
+
 	/**
 	 * Create the dialog.
 	 */
-	public Home(String strID, String strName) {
+	public QuestionList(String strID, String strName) {
 		setBounds(100, 100, 450, 353);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
-		{
-			JLabel lblNewLabel_2 = new JLabel("\uB2D8\uC758 \uC9C4\uB8CC\uC608\uC57D\uC774");
-			lblNewLabel_2.setBounds(66, 10, 101, 15);
-			contentPanel.add(lblNewLabel_2);
-		}
-		{
-			JLabel lblNewLabel_3 = new JLabel(strName);
-			lblNewLabel_3.setBounds(12, 10, 45, 15);
-			contentPanel.add(lblNewLabel_3);
-		}
-		{
-			JLabel lblNewLabel_4 = new JLabel("\uBA87");
-			lblNewLabel_4.setBounds(164, 10, 31, 15);
-			contentPanel.add(lblNewLabel_4);
-		}
-		{
-			JLabel lblNewLabel_5 = new JLabel("\uAC74 \uC788\uC2B5\uB2C8\uB2E4..");
-			lblNewLabel_5.setBounds(195, 10, 126, 15);
-			contentPanel.add(lblNewLabel_5);
-		}
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(25, 71, 378, 148);
 		contentPanel.add(scrollPane);
-		String columnNames[]= {"순번","날짜","시간","진료여부"};
+		String columnNames[]= {"순번","제목","날짜","답변여부"};
 		DefaultTableModel dtm = new DefaultTableModel(columnNames,0);
 		table = new JTable(dtm);		
 		table.addMouseListener(new MouseAdapter() {
@@ -74,17 +56,19 @@ public class Home extends JDialog {
 			public void mouseClicked(MouseEvent e) {
 				int row = table.getSelectedRow();
 				String checkOk = (String)table.getValueAt(row, 1);
+				
+				
 				setVisible(false);
-				ReservationOk reOk = new ReservationOk(checkOk,strID,strName);
-				reOk.setModal(true);
-				reOk.setVisible(true);
+				QuestionModify modify = new QuestionModify(strID, strName,listPW,checkOk,listidx) ;
+				modify.setModal(true);
+				modify.setVisible(true);
 			}
 		});
 		scrollPane.setViewportView(table);
 		// 글꼴 선택(WindowBuilder -> Design - Properties)
 		table.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 		// 셀 너비 조절
-		int widths[] = { 5, 10, 20, 20};		 
+		int widths[] = { 5, 30, 10,5};		 
 		for (int i=0; i<4; i++) {
 		  TableColumn column = table.getColumnModel().getColumn(i);
 		  column.setPreferredWidth( widths[i] );
@@ -92,44 +76,46 @@ public class Home extends JDialog {
 		// 셀 높이 조절
 		table.setRowHeight(25);
 		
-		JButton btnNewButton = new JButton("예약하기");
+		JButton btnNewButton = new JButton("문의하기");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				Reservation reservation = new Reservation(strID, strName);
+				QuestionOk questionOk= new QuestionOk(strID, strName);
 				setVisible(false);
-				reservation.setModal(true);
-				reservation.setVisible(true);
+				questionOk.setModal(true);
+				questionOk.setVisible(true);
 				
 			}
 		});
-		btnNewButton.setBounds(25, 248, 97, 23);
+		btnNewButton.setBounds(98, 248, 97, 23);
 		contentPanel.add(btnNewButton);
 		
-		JButton btnNewButton_1 = new JButton("로그아웃");
+		JButton btnNewButton_1 = new JButton("\uB3CC\uC544\uAC00\uAE30");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				login login = new login();
-				setVisible(false);
-				login.setVisible(true);
-				
+			 Home home = new Home(strName, strName);
+			 setVisible(false);
+			 home.setModal(true);
+			 home.setVisible(true);	
 			}
 		});
-		btnNewButton_1.setBounds(306, 248, 97, 23);
+		btnNewButton_1.setBounds(237, 248, 97, 23);
 		contentPanel.add(btnNewButton_1);
 		
-		JButton btnNewButton_2 = new JButton("\uBB38\uC758\uD558\uAE30");
+		JLabel lblNewLabel = new JLabel("\uBB38\uC758 \uAC8C\uC2DC\uD310");
+		lblNewLabel.setBounds(25, 10, 197, 34);
+		contentPanel.add(lblNewLabel);
+		
+		JButton btnNewButton_2 = new JButton("\uB0B4\uC9C8\uBB38\uBCF4\uAE30");
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Question question = new Question(strID, strName);
-				setVisible(false);
-				question.setModal(true);
-				question.setVisible(true);
+				
+				Myquestion(strID, strName);
 				
 			}
 		});
-		btnNewButton_2.setBounds(164, 248, 97, 23);
+		btnNewButton_2.setBounds(294, 16, 97, 23);
 		contentPanel.add(btnNewButton_2);
 		// 셀 정렬
 		DefaultTableCellRenderer cellAlignRight = new DefaultTableCellRenderer();
@@ -140,8 +126,56 @@ public class Home extends JDialog {
 		ContentList(strID, strName);
 		
 	}
+	
+	//내질문 보기
+	protected void Myquestion(String strID, String strName) {
+		// TODO Auto-generated method stub
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = 
+					DriverManager.getConnection(
+							"jdbc:mysql://localhost:3306/hospital",
+							"root",
+							"12345");
+			Statement stmt = con.createStatement();	
+			
+			String sql = "SELECT * FROM questionlist where id='"+strID+"'";
+			ResultSet rs = stmt.executeQuery(sql);			
+			DefaultTableModel dtm = (DefaultTableModel)table.getModel();
+			dtm.setRowCount(0);
+			
+			
+			
+			int cnt=0;
+			while(rs.next()) {
+				String record[] = new String[4];
+				record[0] = Integer.toString(++cnt);
+				record[1] = rs.getString("title");
+				record[2] = rs.getString("ldate");
+				
+				String ck = null;
+				int listcheck = rs.getInt("listcheck");
+				
+				if(listcheck == 1) {
+					ck = "답변대기중";
+				} else if ( listcheck == 2) {
+					ck = "답변완료";
+				}
+				
+				record[3] = ck;	
+				
+				dtm.addRow(record);
+			}
+											
+		} catch (ClassNotFoundException | SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		
+		
+	}
 
-	// 병원 진료 예약 리스트 
+	//질문리스트
 	public void ContentList(String strID, String strName) {
 		// TODO Auto-generated method stub
 		
@@ -154,7 +188,7 @@ public class Home extends JDialog {
 							"12345");
 			Statement stmt = con.createStatement();	
 			
-			String sql = "SELECT * FROM reservationtbl where id='"+strID+"'";
+			String sql = "SELECT * FROM questionlist ORDER BY listidx DESC";
 			ResultSet rs = stmt.executeQuery(sql);			
 			DefaultTableModel dtm = (DefaultTableModel)table.getModel();
 			dtm.setRowCount(0);
@@ -163,20 +197,19 @@ public class Home extends JDialog {
 			
 			int cnt=0;
 			while(rs.next()) {
-				String record[] = new String[6];
+				String record[] = new String[4];
 				record[0] = Integer.toString(++cnt);
-				record[1] = rs.getString("rdate");
-				record[2] = rs.getString("rtime");
-				
+				record[1] = rs.getString("title");
+				record[2] = rs.getString("ldate");
+				listPW = rs.getString("listPW");
+				listidx= rs.getInt("listidx");
 				String ck = null;
-				int checked = rs.getInt("checkflag");
+				int listcheck = rs.getInt("listcheck");
 				
-				if(checked == 1) {
-					ck = "예약확인중";
-				} else if (checked == 2) {
-					ck = "예약완료";
-				} else if (checked == 0) {
-					ck= "취소";
+				if(listcheck == 1) {
+					ck = "답변대기중";
+				} else if ( listcheck == 2) {
+					ck = "답변완료";
 				}
 				
 				record[3] = ck;	
@@ -188,8 +221,4 @@ public class Home extends JDialog {
 			e1.printStackTrace();
 		}
 	}
-	
-	
-	
-
 }
